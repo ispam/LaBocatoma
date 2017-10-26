@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "676682103930",
+    "firebase_url": "https://labocatoma-bc9aa.firebaseio.com",
+    "project_id": "labocatoma-bc9aa",
+    "storage_bucket": "labocatoma-bc9aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676682103930:android:253f21933692e859",
+        "android_client_info": {
+          "package_name": "destinum.tech.labocatoma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "676682103930-anubfvmk7en8sb9gk3nmj8ij4om13qrq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "destinum.tech.labocatoma",
+            "certificate_hash": "3f7a202ebf446836de90fc81566c7e522814d26c"
+          }
+        },
+        {
+          "client_id": "676682103930-2gmjhpg36dar50vmp8pmtdopa4ck4bco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI9N7rY5_uHWsRUrh1VipDyKLAJjvpCII"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "676682103930-2gmjhpg36dar50vmp8pmtdopa4ck4bco.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

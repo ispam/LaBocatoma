@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LaBocatoma</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="auth_failed">Authentication failed, try again</string>
 </resources>
