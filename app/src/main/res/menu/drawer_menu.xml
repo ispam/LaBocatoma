@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:title="@string/home"
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/home_black_icon"/>
+        <item
+            android:title="@string/history"
+            android:id="@+id/nav_history"
+            android:icon="@mipmap/history_black_icon"/>
+        <item
+            android:title="@string/settings"
+            android:id="@+id/nav_settings"
+            android:icon="@mipmap/settings_black_icon"/>
+        <item
+            android:title="@string/info"
+            android:id="@+id/nav_info"
+            android:icon="@mipmap/info_black_icon"/>
+    </group>
+</menu>

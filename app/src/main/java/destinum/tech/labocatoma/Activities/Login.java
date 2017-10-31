@@ -184,9 +184,7 @@ public class Login extends AppCompatActivity {
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
-
         mProgressBar.setVisibility(View.VISIBLE);
-        mFacebookButton.setVisibility(View.GONE);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -195,7 +193,6 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         mProgressBar.setVisibility(View.GONE);
-                        mFacebookButton.setVisibility(View.VISIBLE);
 
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
