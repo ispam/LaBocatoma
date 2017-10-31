@@ -1,13 +1,12 @@
 package destinum.tech.labocatoma.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -15,14 +14,13 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,34 +39,33 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+
+import java.util.Arrays;
 
 import destinum.tech.labocatoma.R;
 
 public class Login extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private SignInButton mGoogleButton;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static int RC_SIGN_IN = 524;
     private static String TAG = Login.class.getSimpleName();
     private ProgressBar mProgressBar;
     private CallbackManager mCallbackManager;
-    private LoginButton mFacebookButton;
-    private TwitterLoginButton mTwitterButton;
+    private ImageView mFacebookButton, mGoogleButton, mTwitterButton;
+    private TwitterAuthClient mTwitterAuthClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mGoogleButton = findViewById(R.id.sign_in_button_google);
         mProgressBar =  findViewById(R.id.progressBar);
-        mFacebookButton =  findViewById(R.id.login_button_facebook);
-        mTwitterButton = findViewById(R.id.login_button_twitter);
-
-        mGoogleButton.setSize(SignInButton.SIZE_ICON_ONLY);
+        mFacebookButton = findViewById(R.id.facebook_IV);
+        mGoogleButton = findViewById(R.id.google_IV);
+        mTwitterButton = findViewById(R.id.twitter_IV);
 
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -102,24 +99,29 @@ public class Login extends AppCompatActivity {
         });
 
         mCallbackManager = CallbackManager.Factory.create();
-        mFacebookButton.setReadPermissions("email", "public_profile");
-        mFacebookButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        mFacebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(Login.this, Arrays.asList( "email", "public_profile"));
+                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-                // ...
-            }
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "facebook:onCancel");
+                        // ...
+                    }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                // ...
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d(TAG, "facebook:onError", error);
+                        // ...
+                    }
+                });
             }
         });
 
@@ -130,20 +132,24 @@ public class Login extends AppCompatActivity {
                 .build();
         Twitter.initialize(config);
 
-        mTwitterButton.setCallback(new Callback<TwitterSession>() {
+        mTwitterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void success(Result<TwitterSession> result) {
-                Log.d(TAG, "twitterLogin:success" + result);
-                handleTwitterSession(result.data);
-            }
+            public void onClick(View v) {
+                mTwitterAuthClient = new TwitterAuthClient();
+                mTwitterAuthClient.authorize(Login.this, new Callback<TwitterSession>() {
+                    @Override
+                    public void success(Result<TwitterSession> result) {
+                        Log.d(TAG, "twitterLogin:success" + result);
+                        handleTwitterSession(result.data);
+                    }
 
-            @Override
-            public void failure(TwitterException exception) {
-                Log.w(TAG, "twitterLogin:failure", exception);
-//                updateUI(null);
+                    @Override
+                    public void failure(TwitterException exception) {
+                        Log.w(TAG, "twitterLogin:failure", exception);
+                    }
+                });
             }
         });
-
     }
 
     private void handleTwitterSession(TwitterSession session) {
@@ -227,7 +233,9 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        mTwitterButton.onActivityResult(requestCode, resultCode, data);
+        if (mTwitterAuthClient!=null){
+            mTwitterAuthClient.onActivityResult(requestCode, resultCode, data);
+        }
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -247,7 +255,6 @@ public class Login extends AppCompatActivity {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         mProgressBar.setVisibility(View.VISIBLE);
-        mGoogleButton.setVisibility(View.GONE);
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -256,7 +263,6 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         mProgressBar.setVisibility(View.GONE);
-                        mGoogleButton.setVisibility(View.VISIBLE);
 
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
