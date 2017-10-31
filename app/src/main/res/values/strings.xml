@@ -4,5 +4,7 @@
     <string name="auth_failed">Authentication failed, try again</string>
     <string name="facebook_app_id">155040591901100</string>
     <string name="fb_login_protocol_scheme">fb155040591901100</string>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">zkfij6i3GVTdL8Qqaiy5gIlwv</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">JVm3MSw11kQ2cmMvEieCH2eYzEIWnAF1jS91JNI7iNlfMgQrhp</string>
 
 </resources>
